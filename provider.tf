@@ -1,9 +1,9 @@
 terraform {
   cloud {
-    organization = "mengdanzhao-org"
+    organization = "jbcc-iac"
     hostname     = "app.terraform.io"
     workspaces {
-      name = "learn-terraform-azurerm"
+      name = "learn-terraform-azurerm-handson-ws-nksm"
     }
   }
   required_providers {
