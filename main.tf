@@ -4,6 +4,7 @@ resource "azurerm_resource_group" "demo" {
   tags = {
     "Environment" = "handson-test-nksm"
     "Author"      = "nksm"
+    "create date" = "2026/07/17"
   }
 }
 
