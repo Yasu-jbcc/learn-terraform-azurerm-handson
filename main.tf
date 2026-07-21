@@ -101,6 +101,11 @@ resource "azurerm_linux_virtual_machine" "demo" {
   admin_password                  = var.admin_password
   disable_password_authentication = false
 
+  # ↓↓↓ トラステッド起動を有効化 ↓↓↓
+  secure_boot_enabled = true
+  vtpm_enabled        = true
+  # ↑↑↑ ここを追加 ↑↑↑
+
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
