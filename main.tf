@@ -61,7 +61,7 @@ resource "azurerm_network_security_group" "demo" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*" # デモ用。本番では自分のIPに絞る
+    source_address_prefix      = "10.0.0.0/8" # デモ用。本番では自分のIPに絞る
     destination_address_prefix = "*"
   }
 }
