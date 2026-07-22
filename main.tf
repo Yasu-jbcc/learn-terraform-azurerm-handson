@@ -104,7 +104,6 @@ resource "azurerm_linux_virtual_machine" "demo" {
   # ↓↓↓ トラステッド起動を有効化 ↓↓↓
   secure_boot_enabled = true
   vtpm_enabled        = true
-  # ↑↑↑ ここを追加 ↑↑↑
 
   os_disk {
     caching              = "ReadWrite"
@@ -118,4 +117,24 @@ resource "azurerm_linux_virtual_machine" "demo" {
     sku       = "22_04-lts-gen2"
     version   = "latest"
   }
+}
+
+# パフォーマンスプラスを有効化したデータディスク
+resource "azurerm_managed_disk" "data" {
+  name                 = "disk-handson-demo-data"
+  resource_group_name  = azurerm_resource_group.demo.name
+  location             = azurerm_resource_group.demo.location
+  storage_account_type = "StandardSSD_LRS" # または Premium_LRS（HDDは不可）
+  create_option        = "Empty"
+  disk_size_gb         = 513            # 512 GiB より大きいことが必須
+
+  performance_plus_enabled = true
+}
+
+# データディスクをVMにアタッチ
+resource "azurerm_virtual_machine_data_disk_attachment" "data" {
+  managed_disk_id    = azurerm_managed_disk.data.id
+  virtual_machine_id = azurerm_linux_virtual_machine.demo.id
+  lun                = 0
+  caching            = "ReadWrite"
 }
