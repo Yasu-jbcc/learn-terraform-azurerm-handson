@@ -30,6 +30,9 @@ resource "azurerm_storage_account" "demo" {
   location                 = azurerm_resource_group.demo.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  # インフラストラクチャ暗号化（二重暗号化）を有効化。作成時のみ指定可能
+  infrastructure_encryption_enabled = true
 }
 
 resource "random_string" "suffix" {
@@ -101,10 +104,6 @@ resource "azurerm_linux_virtual_machine" "demo" {
   admin_password                  = var.admin_password
   disable_password_authentication = false
 
-  # ↓↓↓ トラステッド起動を有効化 ↓↓↓
-  secure_boot_enabled = true
-  vtpm_enabled        = true
-
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
@@ -117,24 +116,4 @@ resource "azurerm_linux_virtual_machine" "demo" {
     sku       = "22_04-lts-gen2"
     version   = "latest"
   }
-}
-
-# パフォーマンスプラスを有効化したデータディスク
-resource "azurerm_managed_disk" "data" {
-  name                 = "disk-handson-demo-data"
-  resource_group_name  = azurerm_resource_group.demo.name
-  location             = azurerm_resource_group.demo.location
-  storage_account_type = "StandardSSD_LRS" # または Premium_LRS（HDDは不可）
-  create_option        = "Empty"
-  disk_size_gb         = 513            # 512 GiB より大きいことが必須
-
-  performance_plus_enabled = true
-}
-
-# データディスクをVMにアタッチ
-resource "azurerm_virtual_machine_data_disk_attachment" "data" {
-  managed_disk_id    = azurerm_managed_disk.data.id
-  virtual_machine_id = azurerm_linux_virtual_machine.demo.id
-  lun                = 0
-  caching            = "ReadWrite"
 }
